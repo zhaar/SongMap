@@ -6,6 +6,7 @@ import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -66,7 +67,9 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         setupLocation();
-        mMap.addMarker(new MarkerOptions().position(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude())).title("Marker"));
+        LatLng position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(position).title("Marker"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
     }
 
     private void setupLocation(){
