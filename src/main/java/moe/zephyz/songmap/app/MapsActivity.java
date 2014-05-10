@@ -1,5 +1,7 @@
 package moe.zephyz.songmap.app;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -10,19 +12,46 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Location currentLocation;
     private LocationManager locationManager;
+    private Socket socket;
+    final  private int port = 1291;
+    final private String address = "128.179.156.73";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
+        new Thread(new ClientThread()).start();
+    }
+
+    class ClientThread implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                socket = new Socket(address, port);
+                PrintWriter print = new PrintWriter(socket.getOutputStream());
+                print.print("GET_ALL");
+                print.flush();
+                System.out.print("toplelele");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -68,7 +97,9 @@ public class MapsActivity extends FragmentActivity {
     private void setUpMap() {
         setupLocation();
         LatLng position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(position).title("Marker"));
+
+        Marker marker = mMap.addMarker(new MarkerOptions().position(position).title("You"));
+        marker.setDraggable(true);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
     }
 
@@ -77,5 +108,18 @@ public class MapsActivity extends FragmentActivity {
         Criteria criteria = new Criteria();
         String locationProvider = locationManager.getBestProvider(criteria, true);
         currentLocation = locationManager.getLastKnownLocation(locationProvider);
+    }
+
+    private void displayPopup(String title, String content){
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(content)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }
