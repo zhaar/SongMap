@@ -51,4 +51,11 @@ public class SongGraber {
         return track;
     }
 
+    public String getCurrentSongAlbum(){
+        return album;
+    }
+
+    public String getCurrentSongArtist(){
+        return artist;
+    }
 }

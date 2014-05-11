@@ -16,6 +16,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.net.URISyntaxException;
+import java.sql.SQLException;
+
 
 public class MapsActivity extends FragmentActivity {
 
@@ -33,6 +36,13 @@ public class MapsActivity extends FragmentActivity {
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
         songs = new SongGraber(this);
+        try {
+            server = new ServerConnection("");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -99,8 +109,13 @@ public class MapsActivity extends FragmentActivity {
                         .title(songs.getCurrentSongTitle())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 currentMarker.showInfoWindow();
+                if(server!=null){
+                    server.getSongsFromLocation(currentMarker.getPosition());
+                }
             }
         });
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
 

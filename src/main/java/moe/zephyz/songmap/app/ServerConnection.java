@@ -18,12 +18,11 @@ public class ServerConnection {
     private Connection connection;
 
     public ServerConnection(String address) throws SQLException, URISyntaxException {
-        URI dbUri = new URI(System.getenv(address));
-
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
-        this.connection = DriverManager.getConnection(dbUrl, username, password);
+//        URI dbUri = new URI(System.getenv(address));
+//        String username = dbUri.getUserInfo().split(":")[0];
+//        String password = dbUri.getUserInfo().split(":")[1];
+//        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+//        this.connection = DriverManager.getConnection(dbUrl, username, password);
     }
 
     public void addTitle(LatLng position, String title, Date date){
