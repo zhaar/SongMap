@@ -15,9 +15,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.sql.SQLException;
 
 
 public class MapsActivity extends FragmentActivity {
@@ -25,32 +29,20 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Location currentLocation;
     private LocationManager locationManager;
-    private Socket socket;
-    final  private int port = 1291;
-    final private String address = "128.179.156.73";
+    final private String address = "heroku-postgres-5bd3325d.herokuapp.com";
+    private ServerConnection server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
-
-        new Thread(new ClientThread()).start();
-    }
-
-    class ClientThread implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                socket = new Socket(address, port);
-                PrintWriter print = new PrintWriter(socket.getOutputStream());
-                print.print("GET_ALL");
-                print.flush();
-                System.out.print("toplelele");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            server = new ServerConnection(address);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
     }
 
@@ -99,8 +91,17 @@ public class MapsActivity extends FragmentActivity {
         LatLng position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
         Marker marker = mMap.addMarker(new MarkerOptions().position(position).title("You"));
-        marker.setDraggable(true);
+        marker.setDraggable(false);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                retriveList();
+                displayPopup("Your position", marker.getPosition().toString());
+                return true;
+            }
+        });
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
+
     }
 
     private void setupLocation(){
@@ -121,5 +122,15 @@ public class MapsActivity extends FragmentActivity {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    //display list
+    private void retriveList(){
+
+    }
+
+    //
+    private void resetPosition(){
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
     }
 }

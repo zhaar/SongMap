@@ -2,6 +2,11 @@ package moe.zephyz.songmap.app;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -10,22 +15,23 @@ import java.util.Date;
  */
 public class ServerConnection {
 
-    private final String address;
-    private final int port;
+    private Connection connection;
 
-    public ServerConnection(String address, int port){
-        this.address = address;
-        this.port = port;
+    public ServerConnection(String address) throws SQLException, URISyntaxException {
+        URI dbUri = new URI(System.getenv(address));
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+        this.connection = DriverManager.getConnection(dbUrl, username, password);
     }
 
     public void addTitle(LatLng position, String title, Date date){
-
     }
 
-    public List<String＞ getSongsFromPosition(LatLng position){
-        ArrayList<String> list = new ArrayList<>();
 
+    public ArrayList<String> getSongsFromLocation(LatLng position){
+        ArrayList<String> list = new ArrayList<>();
         return list;
     }
-
 }
