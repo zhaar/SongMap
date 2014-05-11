@@ -29,6 +29,7 @@ public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Location currentLocation;
+    private Marker currentMarker;
     private LocationManager locationManager;
     final private String address = "heroku-postgres-5bd3325d.herokuapp.com";
     private ServerConnection server;
@@ -91,8 +92,8 @@ public class MapsActivity extends FragmentActivity {
         setupLocation();
         LatLng position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-        Marker marker = mMap.addMarker(new MarkerOptions().position(position).title("You"));
-        marker.setDraggable(false);
+        currentMarker = mMap.addMarker(new MarkerOptions().position(position).title("You"));
+        currentMarker.setDraggable(false);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -104,13 +105,15 @@ public class MapsActivity extends FragmentActivity {
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng point) {
-                mMap.addMarker(new MarkerOptions()
+                currentMarker.remove();
+                currentMarker = mMap.addMarker(new MarkerOptions()
                         .position(point)
-                        .title("You are here")
+                        .title("Get songs!")
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                currentMarker.showInfoWindow();
             }
         });
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
 
     }
