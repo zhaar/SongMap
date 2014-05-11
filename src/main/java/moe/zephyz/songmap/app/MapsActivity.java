@@ -37,7 +37,7 @@ public class MapsActivity extends FragmentActivity {
         setUpMapIfNeeded();
         songs = new SongGraber(this);
         try {
-            server = new ServerConnection("");
+            server = new ServerConnection("128.179.156.73", 1291);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
@@ -110,7 +110,7 @@ public class MapsActivity extends FragmentActivity {
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 currentMarker.showInfoWindow();
                 if(server!=null){
-                    server.getSongsFromLocation(currentMarker.getPosition());
+                    displayPopup("title", server.getAllSongs());
                 }
             }
         });
@@ -144,10 +144,5 @@ public class MapsActivity extends FragmentActivity {
     //display list
     private void retriveList(){
 
-    }
-
-    //
-    private void resetPosition(){
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 15));
     }
 }

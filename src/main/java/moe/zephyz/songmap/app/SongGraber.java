@@ -41,6 +41,7 @@ public class SongGraber {
                 track = intent.getStringExtra("track");
                 Log.d("Music",artist+":"+album+":"+track);
                 Toast.makeText(activity, track, Toast.LENGTH_SHORT).show();
+
             }
         };
         activity.registerReceiver(receiver, iF);
