@@ -16,14 +16,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.URISyntaxException;
-import java.sql.SQLException;
-
 
 public class MapsActivity extends FragmentActivity {
 
@@ -33,19 +25,14 @@ public class MapsActivity extends FragmentActivity {
     private LocationManager locationManager;
     final private String address = "heroku-postgres-5bd3325d.herokuapp.com";
     private ServerConnection server;
+    private SongGraber songs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
-//        try {
-//            server = new ServerConnection(address);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
+        songs = new SongGraber(this);
     }
 
     @Override
@@ -92,8 +79,9 @@ public class MapsActivity extends FragmentActivity {
         setupLocation();
         LatLng position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-        currentMarker = mMap.addMarker(new MarkerOptions().position(position).title("You"));
+        currentMarker = mMap.addMarker(new MarkerOptions().position(position).title("Get Songs!"));
         currentMarker.setDraggable(false);
+        currentMarker.showInfoWindow();
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -108,7 +96,7 @@ public class MapsActivity extends FragmentActivity {
                 currentMarker.remove();
                 currentMarker = mMap.addMarker(new MarkerOptions()
                         .position(point)
-                        .title("Get songs!")
+                        .title(songs.getCurrentSongTitle())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 currentMarker.showInfoWindow();
             }
