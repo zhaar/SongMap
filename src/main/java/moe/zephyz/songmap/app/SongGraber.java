@@ -33,15 +33,9 @@ public class SongGraber {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                String action = intent.getAction();
-                String cmd = intent.getStringExtra("command");
-                Log.d("mIntentReceiver.onReceive ", action + " / " + cmd);
                 artist = intent.getStringExtra("artist");
                 album = intent.getStringExtra("album");
                 track = intent.getStringExtra("track");
-                Log.d("Music",artist+":"+album+":"+track);
-                Toast.makeText(activity, track, Toast.LENGTH_SHORT).show();
-
             }
         };
         activity.registerReceiver(receiver, iF);

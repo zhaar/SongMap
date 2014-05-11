@@ -96,7 +96,7 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 retriveList();
-                displayPopup("Your position", marker.getPosition().toString());
+                displayPopup("Songs in your area", server.getAllSongs());
                 return true;
             }
         });
@@ -110,7 +110,8 @@ public class MapsActivity extends FragmentActivity {
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 currentMarker.showInfoWindow();
                 if(server!=null){
-                    displayPopup("title", server.getAllSongs());
+                    displayPopup("added song" ,  "title: " +  songs.getCurrentSongTitle() + "\nAlbum: "+ songs.getCurrentSongAlbum() + "\nArtist"+  songs.getCurrentSongArtist());
+                    server.addTitle(currentMarker.getPosition(), songs.getCurrentSongTitle(), songs.getCurrentSongAlbum(), songs.getCurrentSongArtist());
                 }
             }
         });
